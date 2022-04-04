@@ -21,12 +21,15 @@
         Bellow you can download my CV. Thank you for your attention and enjoy
         your <span>{{ dayOfTheWeek }}.</span>
       </p>
+
+      <button @click="downloadCV()">Download my CV</button>
     </div>
   </div>
 </template>
 
 <script>
 import Navbar from "../components/Navbar.vue";
+import { storage, ref, getDownloadURL } from "@/firebase";
 export default {
   components: { Navbar },
   name: "about",
@@ -49,6 +52,50 @@ export default {
       let day = weekday[d.getDay()];
 
       return day;
+    },
+  },
+  methods: {
+    downloadCV() {
+      getDownloadURL(ref(storage, "KristijanTopic-CV.pdf"))
+        .then((url) => {
+          // `url` is the download URL
+          console.log(url);
+          // This can be downloaded directly:
+          const xhr = new XMLHttpRequest();
+          xhr.responseType = "blob";
+          xhr.onload = function () {
+            const blob = xhr.response;
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "KristijanTopic-CV";
+            link.click();
+            URL.revokeObjectURL(link.href);
+          };
+          xhr.open("GET", url);
+          xhr.send();
+        })
+        .catch((error) => {
+          // Handle any errors
+          switch (error.code) {
+            case "storage/object-not-found":
+              // File doesn't exist
+              break;
+
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              break;
+
+            case "storage/canceled":
+              // User canceled the upload
+              break;
+
+            case "storage/unknown":
+              // Unknown error occurred, inspect the server response
+              break;
+            default:
+              break;
+          }
+        });
     },
   },
 };
@@ -83,6 +130,17 @@ export default {
         font-family: "Orbitron-ExtraBold";
       }
     }
+    button {
+      background: none;
+      border: none;
+      color: #fff;
+      outline: none;
+      font-size: 20px;
+      font-family: "Orbitron-ExtraBold";
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
   }
 }
 </style>

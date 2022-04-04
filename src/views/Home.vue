@@ -147,9 +147,11 @@
           </div>
         </router-link>
 
-        <div class="project">
-          <h2>Source code for my portfolio >></h2>
-        </div>
+        <a href="https://github.com/KristijanTop/portfolio" target="_blank">
+          <div class="project">
+            <h2>Source code for my portfolio >></h2>
+          </div>
+        </a>
       </div>
 
       <div class="contact">
